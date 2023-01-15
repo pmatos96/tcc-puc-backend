@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cors from '@fastify/cors';
 import { PrismaClient } from "@prisma/client";
 
 
@@ -12,12 +13,13 @@ async function bootstrap(){
         logger: true
     })
 
+    await fastify.register(cors, {
+        origin: true // TODO - Adaptar o domínio do front
+    })
+
     fastify.get('/equipments', async () => {
 
-
-        const equipments = await prisma.equipment.findMany({
-
-        });
+        const equipments = await prisma.equipment.findMany();
 
         return { equipments }
     })

@@ -5,14 +5,47 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Equipment {
-  id String @id @default(cuid())
-  name String
-  power String
-  isResistive Boolean
+  id           String        @id @default(cuid())
+  name         String
+  power        Decimal
+  isResistive  Boolean
+  projectItems ProjectItem[]
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  projects  Project[]
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  createdAt    DateTime      @default(now())
+  updtedAt     DateTime      @default(now())
+  ownerId      String
+  projectItems ProjectItem[]
+  owner        User          @relation(fields: [ownerId], references: [id])
+}
+
+model ProjectItem {
+  id          String    @id @default(cuid())
+  power       Decimal
+  amount      Int
+  equipmentId String
+  projectId   String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  project     Project   @relation(fields: [projectId], references: [id])
 }
