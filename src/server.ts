@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { FastifyRequest } from "fastify";
 import cors from '@fastify/cors';
 import { PrismaClient } from "@prisma/client";
 
@@ -22,6 +22,51 @@ async function bootstrap(){
         const equipments = await prisma.equipment.findMany();
 
         return { equipments }
+    })
+
+    fastify.get('/projects/:id', async (request: FastifyRequest<{
+        Params: {
+            id: string
+        },
+        Querystring: {
+            ownerId: string
+        }
+    }>) => {
+
+        if(request?.params.id){
+            let project = await prisma.project.findUnique({
+                where: {
+                    id: request.params.id,
+                    ...(request.query.ownerId && {ownerId: request.query.ownerId})
+                }
+            })
+
+            return { project }
+        }
+        else{
+            let projects = await prisma.project.findMany({
+                where: {
+                    ...(request.query.ownerId && {ownerId: request.query.ownerId})
+                }
+            });
+
+            return { projects }
+        }
+    })
+
+    fastify.get('/projects/:id/items', async (request: FastifyRequest<{
+        Params: {
+            id: string
+        }
+    }>) => {
+
+        let projectItems = await prisma.projectItem.findMany({
+            where: {
+                projectId: request.params.id
+            }
+        })
+
+        return { projectItems }
     })
 
     await fastify.listen({ port: 3333 })
