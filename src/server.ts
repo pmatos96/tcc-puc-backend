@@ -17,9 +17,16 @@ async function bootstrap(){
         origin: true // TODO - Adaptar o domínio do front
     })
 
-    fastify.get('/equipments', async () => {
+    fastify.get('/equipments/', async (request: FastifyRequest<{
+        Querystring: {
+            typeId: string
+        }
+    }>) => {
+        let typeId = request.query.typeId;
 
-        const equipments = await prisma.equipment.findMany();
+        const equipments = await prisma.equipment.findMany({
+            where: typeId ? { typeId } : undefined,
+        });
 
         return { equipments }
     })
