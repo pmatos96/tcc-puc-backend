@@ -49,6 +49,13 @@ async function bootstrap(){
         return { equipments }
     })
 
+    fastify.get('/projects/', async (request: FastifyRequest) => {
+        
+        let projects = await prisma.project.findMany();
+
+        return { projects };
+    })
+
     fastify.get('/projects/:id', async (request: FastifyRequest<{
         Params: {
             id: string
