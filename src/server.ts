@@ -109,7 +109,7 @@ async function bootstrap(){
 
         let newProjectItems = [];
 
-        projectItems.forEach(async item => {
+        let operations = projectItems.map(async item => {
 
             const {
                 equipmentId, 
@@ -131,10 +131,11 @@ async function bootstrap(){
                     phasesNumber,
                 }
             })
-            console.log(newProjectItem)
             newProjectItems.push(newProjectItem)
         })
         
+
+        await Promise.all(operations);
 
         response.status(201).send(newProjectItems);
 
