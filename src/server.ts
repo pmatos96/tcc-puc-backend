@@ -1,6 +1,7 @@
 import Fastify, { FastifyRequest } from "fastify";
 import cors from '@fastify/cors';
 import { PrismaClient } from "@prisma/client";
+import { ProjectItem } from "./types/types";
 
 
 const prisma = new PrismaClient({
@@ -93,6 +94,50 @@ async function bootstrap(){
         })
 
         return { projectItems }
+    })
+
+    fastify.post('/projects/:projectId/items', async (request: FastifyRequest<{
+        Params: {
+            projectId: string
+        },
+        Body: ProjectItem[]
+    }>, response) => {
+
+        const { projectId } = request.params;
+
+        const projectItems = request.body.projectItems;
+
+        let newProjectItems = [];
+
+        projectItems.forEach(async item => {
+
+            const {
+                equipmentId, 
+                power, 
+                amount, 
+                roomId, 
+                phasesNumber, 
+                voltage, 
+                current
+            } = item;
+
+            const newProjectItem = await prisma.projectItem.create({
+                data: {
+                    projectId,
+                    equipmentId, 
+                    power, 
+                    amount, 
+                    roomId, 
+                    phasesNumber,
+                }
+            })
+            console.log(newProjectItem)
+            newProjectItems.push(newProjectItem)
+        })
+        
+
+        response.status(201).send(newProjectItems);
+
     })
 
     fastify.get('/rooms/', async (request: FastifyRequest) => {

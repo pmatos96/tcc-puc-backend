@@ -50,15 +50,16 @@ model Project {
 }
 
 model ProjectItem {
-  id          String    @id @default(cuid())
-  power       Decimal
-  amount      Int
-  equipmentId String
-  projectId   String
-  roomId      String?
-  room        Room?     @relation(fields: [roomId], references: [id])
-  equipment   Equipment @relation(fields: [equipmentId], references: [id])
-  project     Project   @relation(fields: [projectId], references: [id])
+  id           String    @id @default(cuid())
+  power        Decimal
+  amount       Int
+  phasesNumber Int       @default(1)
+  equipmentId  String
+  projectId    String
+  roomId       String?
+  room         Room?     @relation(fields: [roomId], references: [id])
+  equipment    Equipment @relation(fields: [equipmentId], references: [id])
+  project      Project   @relation(fields: [projectId], references: [id])
 }
 
 model Room {
