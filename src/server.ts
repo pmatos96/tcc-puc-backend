@@ -81,15 +81,15 @@ async function bootstrap(){
         }
     })
 
-    fastify.get('/projects/:id/items', async (request: FastifyRequest<{
+    fastify.get('/projects/:projectId/items', async (request: FastifyRequest<{
         Params: {
-            id: string
+            projectId: string
         }
     }>) => {
 
         let projectItems = await prisma.projectItem.findMany({
             where: {
-                projectId: request.params.id
+                projectId: request.params.projectId
             }
         })
 
