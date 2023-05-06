@@ -7,4 +7,5 @@ export type ProjectItem = {
     phasesNumber?: number,
     voltage?: number,
     current?: number,
+    boardType: string
 }

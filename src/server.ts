@@ -107,9 +107,20 @@ async function bootstrap(){
 
         const projectItems = request.body.projectItems;
 
+        let preparedProjectItemsByBoardType = Object.entries(projectItems).map(entry => {
+
+            let items = (entry[1] || []).map(item => {
+                return {
+                    ...item,
+                    boardType: entry[0]
+                }
+            })
+            return items
+        }).flat();
+
         let newProjectItems = [];
 
-        let operations = projectItems.map(async item => {
+        let operations = preparedProjectItemsByBoardType.map(async item => {
 
             const {
                 equipmentId, 
@@ -118,17 +129,19 @@ async function bootstrap(){
                 roomId, 
                 phasesNumber, 
                 voltage, 
-                current
+                current,
+                boardType
             } = item;
 
             const newProjectItem = await prisma.projectItem.create({
                 data: {
                     projectId,
                     equipmentId, 
-                    power: Number(power),
-                    amount: Number(amount), 
+                    power: parseInt(power),
+                    amount: parseInt(amount), 
                     roomId, 
-                    phasesNumber: Number(phasesNumber),
+                    phasesNumber: parseInt(phasesNumber || 1),
+                    boardType
                 }
             })
             newProjectItems.push(newProjectItem)
