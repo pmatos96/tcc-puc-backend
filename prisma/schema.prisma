@@ -51,7 +51,7 @@ model Project {
 
 model ProjectItem {
   id           String    @id @default(cuid())
-  boardType    String
+  boardType    String?
   power        Decimal
   amount       Int
   phasesNumber Int       @default(1)
