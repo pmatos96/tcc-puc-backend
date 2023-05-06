@@ -125,10 +125,10 @@ async function bootstrap(){
                 data: {
                     projectId,
                     equipmentId, 
-                    power, 
-                    amount, 
+                    power: Number(power),
+                    amount: Number(amount), 
                     roomId, 
-                    phasesNumber,
+                    phasesNumber: Number(phasesNumber),
                 }
             })
             newProjectItems.push(newProjectItem)
