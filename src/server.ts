@@ -105,6 +105,12 @@ async function bootstrap(){
 
         const { projectId } = request.params;
 
+        await prisma.projectItem.deleteMany({
+            where:{
+                projectId
+            }
+        })
+
         const projectItems = request.body.projectItems;
 
         let preparedProjectItemsByBoardType = Object.entries(projectItems).map(entry => {
