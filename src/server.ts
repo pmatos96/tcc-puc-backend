@@ -50,6 +50,27 @@ async function bootstrap(){
         return { equipments }
     })
 
+    fastify.delete('/projects/:id', async (request: FastifyRequest<{
+        Params: {
+            id: string
+        }
+    }>) => {
+
+        if(request?.params.id){
+
+            await prisma.projectItem.deleteMany({
+                where:{
+                    projectId: request.params.id
+                }
+            })
+
+            await prisma.project.delete({
+                where: {
+                    id: request.params.id
+                }
+            })
+        }
+    })
 
     fastify.get('/projects/:id', async (request: FastifyRequest<{
         Params: {
