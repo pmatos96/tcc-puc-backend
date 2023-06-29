@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { FastifyRequest } from "fastify";
+import { ProjectItem } from "../types/types";
 
 export default class ProjectItemsController {
 

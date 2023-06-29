@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { FastifyRequest } from "fastify";
+import ProjectsService from "../services/projects";
 
 export default class ProjectsController {
 
@@ -15,11 +16,9 @@ export default class ProjectsController {
         
         const { name } = request.body;
 
-        const newProject = await ProjectsController.prisma.project.create({
-            data: {
-                name,
-                ownerId: "clcxsutm50000j938pytsfypo"
-            }
+        const newProject = await ProjectsService.createProject({
+            name,
+            ownerId: "clcxsutm50000j938pytsfypo" // Usuário único setado provisoriamente
         })
 
         response.status(201).send(newProject);
@@ -29,21 +28,14 @@ export default class ProjectsController {
         Params: {
             id: string
         }
-    }>) => {
+    }>, response) => {
 
-        if(request?.params.id){
+        if(request?.params?.id){
 
-            await ProjectsController.prisma.projectItem.deleteMany({
-                where:{
-                    projectId: request.params.id
-                }
-            })
-
-            await ProjectsController.prisma.project.delete({
-                where: {
-                    id: request.params.id
-                }
-            })
+            await ProjectsService.removeProject(request.params.id)
+        }
+        else{
+            response.status(400).json({ error: 'Nenhum id informado.' });
         }
     }
 
@@ -57,23 +49,14 @@ export default class ProjectsController {
     }>) => {
 
         if(request?.params.id){
-            let project = await ProjectsController.prisma.project.findUnique({
-                where: {
-                    id: request.params.id,
-                    ...(request.query.ownerId && {ownerId: request.query.ownerId})
-                }
-            })
+            let project = await ProjectsService.getProject(request.params.id)
 
-            return { project }
+            return project;
         }
         else{
-            let projects = await ProjectsController.prisma.project.findMany({
-                where: {
-                    ...(request.query.ownerId && {ownerId: request.query.ownerId})
-                }
-            });
+            let projects = await ProjectsService.getProjectsByOwner(request.query.ownerId)
 
-            return { projects }
+            return projects;
         }
     }
 }

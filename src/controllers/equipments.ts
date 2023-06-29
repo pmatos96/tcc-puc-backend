@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { FastifyRequest } from "fastify";
+import EquipmentsService from "../services/equipments";
 
 export default class EquipmentsController {
 
@@ -14,10 +15,8 @@ export default class EquipmentsController {
     }>) => {
         let typeId = request.query.typeId;
 
-        const equipments = await EquipmentsController.prisma.equipment.findMany({
-            where: typeId ? { typeId } : undefined,
-        });
+        const equipments = typeId ? await EquipmentsService.getByType(typeId) : await EquipmentsService.getAll();
 
-        return { equipments }
+        return equipments;
     }
 }
