@@ -1,15 +1,10 @@
 import Fastify, { FastifyRequest } from "fastify";
 import cors from '@fastify/cors';
 import { PrismaClient } from "@prisma/client";
-import { ProjectItem } from "./types/types";
 
 import projectsRouter from './routers/projects';
 import equipmentsRouter from "./routers/equipments";
 import roomsRouter from "./routers/rooms";
-
-const prisma = new PrismaClient({
-    log: ['query']
-})
 
 async function bootstrap(){
 
@@ -18,7 +13,7 @@ async function bootstrap(){
     })
 
     await fastify.register(cors, {
-        origin: true // TODO - Adaptar o domínio do front
+        origin: true
     })
 
     fastify.register(projectsRouter, {prefix: '/projects'});
