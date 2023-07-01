@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { ProjectItem } from "../types/types";
+import ProjectItemsService from "../services/projectItems";
 
 export default class ProjectItemsController {
 
@@ -14,76 +15,31 @@ export default class ProjectItemsController {
         }
     }>) => {
 
-        let projectItems = await ProjectItemsController.prisma.projectItem.findMany({
-            where: {
-                projectId: request.params.projectId
-            }
-        })
+        let projectItems = await ProjectItemsService.getByProject(request.params.projectId);
 
-        return { projectItems }
+        return projectItems;
     }
 
     static saveProjectItems = async (request: FastifyRequest<{
         Params: {
             projectId: string
         },
-        Body: ProjectItem[]
-    }>, response) => {
+        Body: {
+            projectItems: ProjectItem[]
+        }
+    }>, response: FastifyReply) => {
 
         const { projectId } = request.params;
 
-        await ProjectItemsController.prisma.projectItem.deleteMany({
-            where:{
-                projectId
-            }
-        })
+        try{
 
-        const projectItems = request.body.projectItems;
-
-        let preparedProjectItemsByBoardType = Object.entries(projectItems).map(entry => {
-
-            let items = (entry[1] || []).map(item => {
-                return {
-                    ...item,
-                    boardType: entry[0]
-                }
-            })
-            return items
-        }).flat();
-
-        let newProjectItems = [];
-
-        let operations = preparedProjectItemsByBoardType.map(async item => {
-
-            const {
-                equipmentId, 
-                power, 
-                amount, 
-                roomId, 
-                phasesNumber, 
-                voltage, 
-                current,
-                boardType
-            } = item;
-
-            const newProjectItem = await ProjectItemsController.prisma.projectItem.create({
-                data: {
-                    projectId,
-                    equipmentId, 
-                    power: parseInt(power),
-                    amount: parseInt(amount), 
-                    roomId, 
-                    phasesNumber: parseInt(phasesNumber || 1),
-                    boardType
-                }
-            })
-            newProjectItems.push(newProjectItem)
-        })
-        
-
-        await Promise.all(operations);
-
-        response.status(201).send(newProjectItems);
+            let newProjectItems = await ProjectItemsService.saveProjectItems(projectId, request.body.projectItems);
+            
+            response.status(201).send(newProjectItems);
+        }
+        catch(err){
+            response.status(400).send({error: "Houve um erro ao tentar salvar os itens da instalação:\n\n" + err});
+        }
 
     }
 }

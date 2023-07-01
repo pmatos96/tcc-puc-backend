@@ -1,18 +1,14 @@
 import { PrismaClient } from "@prisma/client";
-import { FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import ProjectsService from "../services/projects";
 
 export default class ProjectsController {
-
-    static prisma = new PrismaClient({
-        log: ['query']
-    })
 
     static createProject = async (request: FastifyRequest<{
         Body: {
             name: string
         }
-    }>, response) => {
+    }>, response: FastifyReply) => {
         
         const { name } = request.body;
 
@@ -28,14 +24,14 @@ export default class ProjectsController {
         Params: {
             id: string
         }
-    }>, response) => {
+    }>, response: FastifyReply) => {
 
         if(request?.params?.id){
 
             await ProjectsService.removeProject(request.params.id)
         }
         else{
-            response.status(400).json({ error: 'Nenhum id informado.' });
+            response.status(400).send({ error: 'Nenhum id informado.' });
         }
     }
 

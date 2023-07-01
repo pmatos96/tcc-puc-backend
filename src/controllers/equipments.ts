@@ -4,10 +4,6 @@ import EquipmentsService from "../services/equipments";
 
 export default class EquipmentsController {
 
-    static prisma = new PrismaClient({
-        log: ['query']
-    })
-
     static getAll = async (request: FastifyRequest<{
         Querystring: {
             typeId: string

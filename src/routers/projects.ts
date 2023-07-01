@@ -15,7 +15,7 @@ const projectsRouter: FastifyPluginAsync = async (fastify) => {
 
     fastify.delete('/:id', ProjectsController.removeProject)
 
-    fastify.register(projectItemsRouter, {prefix: '/:id/items'});
+    fastify.register(projectItemsRouter, {prefix: '/:projectId/items'});
 };
 
 export default projectsRouter;

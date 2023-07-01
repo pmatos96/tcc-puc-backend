@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { projectCreationInput } from "./types/projectsServiceTypes";
+import ProjectItemsService from "./projectItems";
 
 export default class ProjectsService {
 
@@ -35,11 +36,7 @@ export default class ProjectsService {
 
     static async removeProject(id: string){
 
-        await ProjectsService.prisma.projectItem.deleteMany({
-            where:{
-                projectId: id
-            }
-        })
+        await ProjectItemsService.removeAll(id);
 
         await ProjectsService.prisma.project.delete({
             where: {

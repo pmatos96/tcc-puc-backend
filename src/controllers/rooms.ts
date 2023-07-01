@@ -1,16 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { FastifyRequest } from "fastify";
+import RoomsService from "../services/rooms";
 
 export default class RoomsController {
 
-    static prisma = new PrismaClient({
-        log: ['query']
-    })
-
     static getAll = async (request: FastifyRequest) => {
 
-        let rooms = await RoomsController.prisma.room.findMany();
+        let rooms = await RoomsService.getAll();
 
-        return { rooms }
+        return rooms;
     }
 }
