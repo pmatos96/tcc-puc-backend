@@ -20,9 +20,9 @@ async function bootstrap(){
     fastify.register(equipmentsRouter, {prefix: '/equipments'});
     fastify.register(roomsRouter, {prefix: '/rooms'});
     
-    const PORT = process.env.PORT;
+    const PORT = process.env.PORT || 3333;
 
-    await fastify.listen({ port: (PORT || 3333) })
+    await fastify.listen(PORT)
 }
 
 bootstrap();
