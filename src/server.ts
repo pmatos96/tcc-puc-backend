@@ -22,7 +22,7 @@ async function bootstrap(){
     
     const PORT = process.env.PORT || 3333;
 
-    await fastify.listen(PORT)
+    await fastify.listen(PORT, '0.0.0.0')
 }
 
 bootstrap();
